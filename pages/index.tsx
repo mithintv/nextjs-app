@@ -27,29 +27,29 @@ function HomePage(props: MeetupTypeList) {
   return <MeetupList meetups={props.meetups} />;
 }
 
-export const getServerSideProps: GetServerSideProps = async function (context) {
-  // any code here will be run on the server but not on the client
-  const req = context.req;
-  const res = context.res;
+// export const getServerSideProps: GetServerSideProps = async function (context) {
+//   // any code here will be run on the server but not on the client
+//   const req = context.req;
+//   const res = context.res;
 
-  // fetch data from an API
+//   // fetch data from an API
 
-  return {
-    props: {
-      meetups: DUMMY_MEETUPS,
-    },
-  };
-};
-
-// export const getStaticProps: GetStaticProps = async function() {
-//   // code in this function will only execute in the build process. It will not be server-side or client-side
-//   // fetch data from an API or database
 //   return {
 //     props: {
 //       meetups: DUMMY_MEETUPS,
 //     },
-//     revalidate: 10,
 //   };
-// }
+// };
+
+export const getStaticProps: GetStaticProps = async function () {
+  // code in this function will only execute in the build process. It will not be server-side or client-side
+  // fetch data from an API or database
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+    revalidate: 10,
+  };
+};
 
 export default HomePage;
