@@ -1,13 +1,8 @@
 import classes from "./MeetupDetail.module.css";
 
-type Props = {
-  image: string;
-  title: string;
-  address: string;
-  description: string;
-};
+import { MeetupType } from "../../models/meetup-model";
 
-function MeetupDetail(props: Props) {
+function MeetupDetail(props: MeetupType) {
   return (
     <section className={classes.detail}>
       <img src={props.image} alt={props.title} />

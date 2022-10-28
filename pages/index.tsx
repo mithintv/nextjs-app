@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
 import MeetupList from "../components/meetups/MeetupList";
+
+import { MeetupTypeList } from "../models/meetup-model";
 
 const DUMMY_MEETUPS = [
   {
@@ -20,14 +21,18 @@ const DUMMY_MEETUPS = [
   },
 ];
 
-function HomePage() {
-  const [loadedMeetups, setloadedMeetups] = useState([]);
-  useEffect(() => {
-    // send an http request and fetch data
-    setloadedMeetups(DUMMY_MEETUPS);
-  }, []);
+function HomePage(props: MeetupTypeList) {
+  return <MeetupList meetups={props.meetups} />;
+}
 
-  return <MeetupList meetups={loadedMeetups} />;
+export async function getStaticProps() {
+  // code in this function will only execute in the build process. It will not be server-side or client-side
+  // fetch data from an API or database
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+    },
+  };
 }
 
 export default HomePage;

@@ -1,16 +1,11 @@
 import { useRouter } from "next/router";
 
+import { MeetupType } from "../../models/meetup-model";
+
 import Card from "../ui/Card";
 import classes from "./MeetupItem.module.css";
 
-type Props = {
-  id: string;
-  image: string;
-  title: string;
-  address: string;
-};
-
-function MeetupItem(props: Props) {
+function MeetupItem(props: MeetupType) {
   const router = useRouter();
   function showDetailsHandler() {
     router.push("/" + props.id);

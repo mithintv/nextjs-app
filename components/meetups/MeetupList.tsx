@@ -1,16 +1,10 @@
 import MeetupItem from "./MeetupItem";
+
+import { MeetupTypeList } from "../../models/meetup-model";
+
 import classes from "./MeetupList.module.css";
 
-type Props = {
-  meetups: {
-    id: string;
-    image: string;
-    title: string;
-    address: string;
-  }[];
-};
-
-function MeetupList(props: Props) {
+function MeetupList(props: MeetupTypeList) {
   return (
     <ul className={classes.list}>
       {props.meetups.map((meetup) => (
@@ -20,6 +14,7 @@ function MeetupList(props: Props) {
           image={meetup.image}
           title={meetup.title}
           address={meetup.address}
+          description={meetup.description}
         />
       ))}
     </ul>
