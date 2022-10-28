@@ -1,5 +1,5 @@
 // our-domain.com/:meetupId
-import { GetStaticProps } from "next";
+import { GetStaticProps, GetStaticPaths } from "next";
 import { MeetupType } from "../../models/meetup-model";
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
@@ -14,6 +14,25 @@ function MeetupDetails() {
     />
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async function () {
+  // describe all the dynamic site pages that need to be pre-generated
+  return {
+    fallback: false,
+    paths: [
+      {
+        params: {
+          meetupId: "m1",
+        },
+      },
+      {
+        params: {
+          meetupId: "m2",
+        },
+      },
+    ],
+  };
+};
 
 export const getStaticProps: GetStaticProps = async (context) => {
   // fetch data for a single meetup
