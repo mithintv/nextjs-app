@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export type MeetupSubmissionType = {
   title: string;
   image: string;
@@ -7,6 +9,7 @@ export type MeetupSubmissionType = {
 
 export type MeetupType = MeetupSubmissionType & {
   id: string;
+  _id?: ObjectId;
 };
 
 export type MeetupTypeList = {

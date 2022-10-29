@@ -1,52 +1,64 @@
 // our-domain.com/:meetupId
+import { MongoClient, ObjectId } from "mongodb";
+
 import { GetStaticProps, GetStaticPaths } from "next";
 import { MeetupType } from "../../models/meetup-model";
 import MeetupDetail from "../../components/meetups/MeetupDetail";
 
-function MeetupDetails() {
+function MeetupDetails(props: { meetupData: MeetupType }) {
   return (
     <MeetupDetail
-      id="m1"
-      image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg"
-      title="First Meetup"
-      address="Some Street 5, Some City"
-      description="This is a first meetup"
+      id={props.meetupData.id.toString()}
+      image={props.meetupData.image}
+      title={props.meetupData.title}
+      address={props.meetupData.address}
+      description={props.meetupData.description}
     />
   );
 }
 
 export const getStaticPaths: GetStaticPaths = async function () {
   // describe all the dynamic site pages that need to be pre-generated
+
+  const client = await MongoClient.connect(
+    `mongodb+srv://admin:${process.env.MONGO_DB_PASS}@cluster0.80el5kh.mongodb.net/nextjs?retryWrites=true&w=majority`
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+  const meetups = await meetupsCollection.find({}, {}).toArray();
+  client.close();
   return {
     fallback: false,
-    paths: [
-      {
-        params: {
-          meetupId: "m1",
-        },
-      },
-      {
-        params: {
-          meetupId: "m2",
-        },
-      },
-    ],
+    paths: meetups.map((meetup) => ({
+      params: { meetupId: meetup._id.toString() },
+    })),
   };
 };
 
 export const getStaticProps: GetStaticProps = async (context) => {
   // fetch data for a single meetup
-  const meetupId = context.params.meetupId;
+  const meetupId = context.params.meetupId.toString();
   console.log(meetupId);
+
+  const client = await MongoClient.connect(
+    `mongodb+srv://admin:${process.env.MONGO_DB_PASS}@cluster0.80el5kh.mongodb.net/nextjs?retryWrites=true&w=majority`
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: new ObjectId(meetupId),
+  });
+  console.log(selectedMeetup);
+  client.close();
+
   return {
     props: {
       meetupData: {
-        id: meetupId,
-        image:
-          "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg",
-        title: "First Meetup",
-        address: "Some Street 5, Some City",
-        description: "This is a first meetup",
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        image: selectedMeetup.image,
+        address: selectedMeetup.address,
+        description: selectedMeetup.description,
       },
     },
   };
