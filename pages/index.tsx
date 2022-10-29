@@ -1,27 +1,10 @@
+import { MongoClient } from "mongodb";
+
 import { GetStaticProps, GetServerSideProps } from "next";
 
 import MeetupList from "../components/meetups/MeetupList";
 
 import { MeetupTypeList } from "../models/meetup-model";
-
-const DUMMY_MEETUPS = [
-  {
-    id: "m1",
-    title: "A First Meetup",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg",
-    address: "Some Address 5, 12345 Some City",
-    description: "This is a first meetup",
-  },
-  {
-    id: "m2",
-    title: "A Second Meetup",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Stadtbild_M%C3%BCnchen.jpg/1280px-Stadtbild_M%C3%BCnchen.jpg",
-    address: "Some Address 10, 12345 Some City",
-    description: "This is a second meetup",
-  },
-];
 
 function HomePage(props: MeetupTypeList) {
   return <MeetupList meetups={props.meetups} />;
@@ -44,9 +27,25 @@ function HomePage(props: MeetupTypeList) {
 export const getStaticProps: GetStaticProps = async function () {
   // code in this function will only execute in the build process. It will not be server-side or client-side
   // fetch data from an API or database
+  const client = await MongoClient.connect(
+    `mongodb+srv://admin:${process.env.MONGO_DB_PASS}@cluster0.80el5kh.mongodb.net/nextjs?retryWrites=true&w=majority`
+  );
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+
+  const meetups = await meetupsCollection.find().toArray();
+
+  client.close();
+
   return {
     props: {
-      meetups: DUMMY_MEETUPS,
+      meetups: meetups.map((meetup) => ({
+        id: meetup._id.toString(),
+        image: meetup.image,
+        title: meetup.title,
+        address: meetup.address,
+        description: meetup.description,
+      })),
     },
     revalidate: 10,
   };
