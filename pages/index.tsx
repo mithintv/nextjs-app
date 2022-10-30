@@ -18,7 +18,7 @@ function HomePage(props: MeetupTypeList) {
           content="Browse a huge list of highly active React meetups"
         />
       </Head>
-      <MeetupList meetups={props.meetups} />;
+      <MeetupList meetups={props.meetups} />
     </>
   );
 }
